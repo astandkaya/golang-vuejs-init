@@ -1,0 +1,42 @@
+version: '3'
+services:
+
+  # client
+  go_vue_client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: go_vue_client
+    ports:
+      - 8798:8080
+    tty: true
+    command: sh -c "npm run serve"
+    volumes:
+      - ./client:/usr/src/app
+
+  # Go Server
+  go_vue_server:
+    build: 
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: go_vue_server
+    ports:
+      - 3000:8000
+    tty: true
+    # command: sh -c "air -c .air.toml"
+    volumes:
+      - ./server:/go/src/app
+    depends_on:
+      - 'go_vue_db'
+
+  # db
+  go_vue_db:
+    image: mariadb:latest
+    container_name: go_vue_db
+    ports:
+      - 3798:3306
+    environment:
+      - MYSQL_DATABASE=go_vue
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+      - MYSQL_ROOT_PASSWORD=root_password
