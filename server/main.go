@@ -2,25 +2,36 @@ package main
 
 import (
 	"net/http"
+
 	"github.com/gin-gonic/gin"
-	"app/controllers"
+
+    "app/middleware"
+    "app/controllers"
 )
 
 func main() {
-    engine := gin.Default()
-    
-    engine.GET("/", func(c *gin.Context) {
+    g := gin.Default()
+
+    db := middleware.DbConnection()
+    db.Connect()
+
+    // -----
+    // route
+    // -----
+    g.GET("/", func(c *gin.Context) {
         c.JSON(http.StatusOK, gin.H{
             "message": "hello world",
         })
     })
 
-    test := engine.Group("/test")
+    test := g.Group("/test")
     {
         v1 := test.Group("/v1")
         {
-            v1.GET("/test", controllers.Test)
+            tc := controllers.Top()
+            v1.GET("/test", tc.Index)
         }
     }
-    engine.Run(":8000")
+
+    g.Run(":8000")
 }
