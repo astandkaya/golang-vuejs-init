@@ -6,7 +6,7 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
-    container_name: go_vue_client
+    container_name: go-vue-client
     ports:
       - 8798:8080
     tty: true
@@ -19,7 +19,7 @@ services:
     build: 
       context: ./server
       dockerfile: Dockerfile
-    container_name: go_vue_server
+    container_name: go-vue-server
     ports:
       - 3000:8000
     tty: true
@@ -32,7 +32,7 @@ services:
   # db
   go_vue_db:
     image: mariadb:latest
-    container_name: go_vue_db
+    container_name: go-vue-db
     ports:
       - 3798:3306
     environment:
