@@ -6,24 +6,24 @@ import (
     "app/models"
 )
 
-type TestRepo struct {
+type TestRepository struct {
     db *gorm.DB
 }
 
-func Test(db *gorm.DB) *TestRepo {
-    return &TestRepo{
+func Test(db *gorm.DB) *TestRepository {
+    return &TestRepository{
         db: db,
     }
 }
 
-func (r *TestRepo) Find(id int) *models.TestModel {
+func (r *TestRepository) Find(id int) *models.TestModel {
     result := &models.TestModel{}
     r.db.Find(result, id)
 
     return result
 }
 
-func (r *TestRepo) All() *[]models.TestModel {
+func (r *TestRepository) All() *[]models.TestModel {
     result := &[]models.TestModel{}
     r.db.Find(result)
 
