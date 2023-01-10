@@ -15,14 +15,11 @@ func main() {
     // -----
     // route
     // -----
-    test := g.Group("/test")
+    v1 := g.Group("/v1")
     {
-        v1 := test.Group("/v1")
-        {
-            r := repositories.Test(db)
-            c := controllers.Test(r)
-            v1.GET("/test", c.Index)
-        }
+        r := repositories.Test(db)
+        c := controllers.Test(r)
+        v1.GET("/test", c.Index)
     }
 
     g.Run(":8000")
