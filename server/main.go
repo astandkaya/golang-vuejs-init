@@ -5,15 +5,14 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-    "app/middleware"
+    "app/database"
+    "app/repositories"
     "app/controllers"
 )
 
 func main() {
     g := gin.Default()
-
-    db := middleware.DbConnection()
-    db.Connect()
+    db := database.Connection()
 
     // -----
     // route
@@ -28,8 +27,9 @@ func main() {
     {
         v1 := test.Group("/v1")
         {
-            tc := controllers.Top()
-            v1.GET("/test", tc.Index)
+            r := repositories.Test(db)
+            c := controllers.Test(r)
+            v1.GET("/test", c.Index)
         }
     }
 
