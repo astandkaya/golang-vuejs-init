@@ -7,19 +7,25 @@ import (
 )
 
 type TestRepo struct {
-	db *gorm.DB
+    db *gorm.DB
 }
 
 func Test(db *gorm.DB) *TestRepo {
-	return &TestRepo{
-		db: db,
-	}
+    return &TestRepo{
+        db: db,
+    }
 }
 
-func (r *TestRepo) FindByID(ID int) (*models.TestModel, error) {
-	return &models.TestModel{}, nil
+func (r *TestRepo) Find(id int) *models.TestModel {
+    result := &models.TestModel{}
+    r.db.Find(result, id)
+
+    return result
 }
 
-func (r *TestRepo) Save(test *models.TestModel) error {
-	return nil
+func (r *TestRepo) All() *[]models.TestModel {
+    result := &[]models.TestModel{}
+    r.db.Find(result)
+
+    return result
 }

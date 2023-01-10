@@ -10,6 +10,7 @@ type TestModel struct {
 }
 
 type TestRepository interface {
-    FindByID(ID int) (*TestModel, error)
+    Find(id int) *TestModel
+    All() *[]TestModel
     Save(test *TestModel) error
 }
