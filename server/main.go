@@ -1,8 +1,6 @@
 package main
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 
     "app/database"
@@ -17,12 +15,6 @@ func main() {
     // -----
     // route
     // -----
-    g.GET("/", func(c *gin.Context) {
-        c.JSON(http.StatusOK, gin.H{
-            "message": "hello world",
-        })
-    })
-
     test := g.Group("/test")
     {
         v1 := test.Group("/v1")
