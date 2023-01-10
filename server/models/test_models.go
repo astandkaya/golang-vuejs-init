@@ -12,5 +12,4 @@ type TestModel struct {
 type TestRepository interface {
     Find(id int) *TestModel
     All() *[]TestModel
-    Save(test *TestModel) error
 }
