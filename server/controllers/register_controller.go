@@ -20,14 +20,16 @@ func Register(userRepo models.UserRepository) *RegisterController {
 }
 
 func (r *RegisterController) Store(ctx *gin.Context) {
-    username := ctx.Query("username")
-    password := services.Hash().Make(ctx.Query("password"))
-
-    user := &models.UserModel{
-        UserName: username,
-        Password: password,
+    user := models.User()
+    if err := ctx.ShouldBind(user); err != nil {
+        ctx.JSON(http.StatusCreated, gin.H{
+            "status": "ng",
+            "message": "valid error",
+        })
+        return
     }
 
+    user.Password = services.Hash().Make(user.Password)
     r.userRepo.Create(user);
 
     ctx.JSON(http.StatusCreated, gin.H{

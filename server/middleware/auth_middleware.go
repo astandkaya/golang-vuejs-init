@@ -51,7 +51,7 @@ func Auth(identityKey string, userRepo models.UserRepository) *jwt.GinJWTMiddlew
                 return nil, jwt.ErrFailedAuthentication
             },
             Authorizator: func(data interface{}, c *gin.Context) bool {
-                if v, ok := data.(*models.UserModel); ok && v.UserName == "admin" {
+                if _, ok := data.(*models.UserModel); ok {
                     return true
                 }
 
