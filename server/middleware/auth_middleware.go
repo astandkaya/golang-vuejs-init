@@ -3,33 +3,24 @@ package middleware
 import (
     "time"
     "log"
+    "os"
 
     "github.com/gin-gonic/gin"
     jwt "github.com/appleboy/gin-jwt/v2"
+
+    "app/models"
 )
 
-type login struct {
-  Username string `form:"username" json:"username" binding:"required"`
-  Password string `form:"password" json:"password" binding:"required"`
-}
-
-// User demo
-type User struct {
-  UserName  string
-  FirstName string
-  LastName  string
-}
-
-func Auth(identityKey string) *jwt.GinJWTMiddleware {
+func Auth(identityKey string, userRepo models.UserRepository) *jwt.GinJWTMiddleware {
     m, err := jwt.New(
         &jwt.GinJWTMiddleware{
             Realm:       "test zone",
-            Key:         []byte("secret key"),
+            Key:         []byte(os.Getenv("JWT_SECRET_KEY")),
             Timeout:     time.Hour,
             MaxRefresh:  time.Hour,
             IdentityKey: identityKey,
             PayloadFunc: func(data interface{}) jwt.MapClaims {
-                if v, ok := data.(*User); ok {
+                if v, ok := data.(*models.UserModel); ok {
                     return jwt.MapClaims{
                         identityKey: v.UserName,
                     }
@@ -38,30 +29,28 @@ func Auth(identityKey string) *jwt.GinJWTMiddleware {
             },
             IdentityHandler: func(c *gin.Context) interface{} {
                 claims := jwt.ExtractClaims(c)
-                return &User{
+                return &models.UserModel{
                     UserName: claims[identityKey].(string),
                 }
             },
             Authenticator: func(c *gin.Context) (interface{}, error) {
-                var loginVals login
+                var loginVals models.UserModel
                 if err := c.ShouldBind(&loginVals); err != nil {
                     return "", jwt.ErrMissingLoginValues
                 }
-                userID := loginVals.Username
+                userName := loginVals.UserName
                 password := loginVals.Password
 
-                if (userID == "admin" && password == "admin") || (userID == "test" && password == "test") {
-                    return &User{
-                        UserName:  userID,
-                        LastName:  "Bo-Yi",
-                        FirstName: "Wu",
+                if ( userRepo.Exists(userName, password) ) {
+                    return &models.UserModel{
+                        UserName:  userName,
                     }, nil
                 }
 
                 return nil, jwt.ErrFailedAuthentication
             },
             Authorizator: func(data interface{}, c *gin.Context) bool {
-                if v, ok := data.(*User); ok && v.UserName == "admin" {
+                if v, ok := data.(*models.UserModel); ok && v.UserName == "admin" {
                     return true
                 }
 

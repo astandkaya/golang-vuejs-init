@@ -16,7 +16,7 @@ func main() {
 
     identityKey := "id"
 
-    authMiddleware := middleware.Auth(identityKey)
+    authMiddleware := middleware.Auth(identityKey, repositories.User(db))
     authMiddleware.MiddlewareInit()
 
     // -----
