@@ -39,12 +39,12 @@ func Auth(identityKey string, userRepo models.UserRepository) *jwt.GinJWTMiddlew
                 if err := c.ShouldBind(&loginVals); err != nil {
                     return "", jwt.ErrMissingLoginValues
                 }
-                userName := loginVals.UserName
+                username := loginVals.UserName
                 password := services.Hash().Make(loginVals.Password)
 
-                if ( userRepo.Exists(userName, password) ) {
+                if ( userRepo.Exists(username, password) ) {
                     return &models.UserModel{
-                        UserName:  userName,
+                        UserName:  username,
                     }, nil
                 }
 
