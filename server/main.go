@@ -24,14 +24,17 @@ func main() {
     // -----
     v1 := g.Group("/v1")
     {
-        // 通常のAPI
-        r := repositories.Test(db)
-        c := controllers.Test(r)
-        v1.GET("/test", c.Index)
+        test := controllers.Test(repositories.Test(db))
+        register := controllers.Register(repositories.User(db))
 
-        // 認証API
+        // 通常のAPI
+        v1.GET("/test", test.Index)
+
+        // 認証系API
         auth := v1.Group("/auth")
         {
+            auth.POST("/register", register.Store)
+
             auth.POST("/login", authMiddleware.LoginHandler)
             auth.GET("/refresh_token", authMiddleware.RefreshHandler)
         }

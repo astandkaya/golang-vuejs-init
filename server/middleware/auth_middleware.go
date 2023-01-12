@@ -9,6 +9,7 @@ import (
     jwt "github.com/appleboy/gin-jwt/v2"
 
     "app/models"
+    "app/services"
 )
 
 func Auth(identityKey string, userRepo models.UserRepository) *jwt.GinJWTMiddleware {
@@ -39,7 +40,7 @@ func Auth(identityKey string, userRepo models.UserRepository) *jwt.GinJWTMiddlew
                     return "", jwt.ErrMissingLoginValues
                 }
                 userName := loginVals.UserName
-                password := loginVals.Password
+                password := services.Hash().Make(loginVals.Password)
 
                 if ( userRepo.Exists(userName, password) ) {
                     return &models.UserModel{

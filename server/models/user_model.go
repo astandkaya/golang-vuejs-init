@@ -11,6 +11,7 @@ type UserModel struct {
 }
 
 type UserRepository interface {
+    Create(user *UserModel)
     Find(id int) *UserModel
     All() *[]UserModel
     Exists(username string, password string) bool

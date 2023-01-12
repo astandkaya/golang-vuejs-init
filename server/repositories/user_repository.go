@@ -16,6 +16,10 @@ func User(db *gorm.DB) *UserRepository {
     }
 }
 
+func (r *UserRepository) Create(user *models.UserModel) {
+    r.db.Create(user)
+}
+
 func (r *UserRepository) Find(id int) *models.UserModel {
     result := &models.UserModel{}
     r.db.Find(result, id)
