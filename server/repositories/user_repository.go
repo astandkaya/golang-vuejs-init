@@ -34,12 +34,12 @@ func (r *UserRepository) All() *[]models.UserModel {
     return result
 }
 
-func (r *UserRepository) Exists(username string, password string) bool {
+func (r *UserRepository) Exists(email string, password string) bool {
     result := &models.UserModel{}
     cnt := 0
     
     r.db.Where(&models.UserModel{
-        UserName: username,
+        Email: email,
         Password: password,
     }).Find(result).Count(&cnt)
 

@@ -6,7 +6,7 @@ import (
 
 type UserModel struct {
     gorm.Model
-    UserName  string `form:"username" json:"username" binding:"required"`
+    Email  string `form:"email" json:"email" binding:"required"`
     Password  string `form:"password" json:"password" binding:"required"`
 }
 
@@ -19,5 +19,5 @@ type UserRepository interface {
     Create(user *UserModel)
     Find(id int) *UserModel
     All() *[]UserModel
-    Exists(username string, password string) bool
+    Exists(email string, password string) bool
 }

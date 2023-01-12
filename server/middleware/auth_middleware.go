@@ -23,7 +23,7 @@ func Auth(identityKey string, userRepo models.UserRepository) *jwt.GinJWTMiddlew
             PayloadFunc: func(data interface{}) jwt.MapClaims {
                 if v, ok := data.(*models.UserModel); ok {
                     return jwt.MapClaims{
-                        identityKey: v.UserName,
+                        identityKey: v.Email,
                     }
                 }
                 return jwt.MapClaims{}
@@ -31,7 +31,7 @@ func Auth(identityKey string, userRepo models.UserRepository) *jwt.GinJWTMiddlew
             IdentityHandler: func(c *gin.Context) interface{} {
                 claims := jwt.ExtractClaims(c)
                 return &models.UserModel{
-                    UserName: claims[identityKey].(string),
+                    Email: claims[identityKey].(string),
                 }
             },
             Authenticator: func(c *gin.Context) (interface{}, error) {
@@ -39,12 +39,12 @@ func Auth(identityKey string, userRepo models.UserRepository) *jwt.GinJWTMiddlew
                 if err := c.ShouldBind(&loginVals); err != nil {
                     return "", jwt.ErrMissingLoginValues
                 }
-                username := loginVals.UserName
+                email := loginVals.Email
                 password := services.Hash().Make(loginVals.Password)
 
-                if ( userRepo.Exists(username, password) ) {
+                if ( userRepo.Exists(email, password) ) {
                     return &models.UserModel{
-                        UserName:  username,
+                        Email:  email,
                     }, nil
                 }
 
