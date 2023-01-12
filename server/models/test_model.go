@@ -9,6 +9,11 @@ type TestModel struct {
     Test    string
 }
 
+func Test() *TestModel {
+    return &TestModel{
+    }
+}
+
 type TestRepository interface {
     Find(id int) *TestModel
     All() *[]TestModel

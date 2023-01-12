@@ -10,6 +10,11 @@ type UserModel struct {
     Password  string `form:"password" json:"password" binding:"required"`
 }
 
+func User() *UserModel {
+    return &UserModel{
+    }
+}
+
 type UserRepository interface {
     Create(user *UserModel)
     Find(id int) *UserModel
