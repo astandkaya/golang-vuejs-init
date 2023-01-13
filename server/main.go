@@ -8,6 +8,7 @@ import (
     "app/repositories"
     "app/controllers"
     "app/middleware"
+    "app/models"
 )
 
 func main() {
@@ -48,10 +49,10 @@ func main() {
         {
             v1.GET("/test_auth", func(c *gin.Context) {
                 claims := jwt.ExtractClaims(c)
-                // user, _ := c.Get(identityKey)
+                user, _ := c.Get(identityKey)
                 c.JSON(200, gin.H{
                   "userID":   claims[identityKey],
-                  // "userName": user.(*User).UserName,
+                  "email": user.(*models.UserModel).Email,
                   "text":     "Hello World.",
                 })
             })

@@ -21,7 +21,7 @@ func (r *UserRepository) Create(user *models.UserModel) {
 }
 
 func (r *UserRepository) Find(id int) *models.UserModel {
-    result := &models.UserModel{}
+    result := models.User()
     r.db.Find(result, id)
 
     return result
@@ -35,13 +35,12 @@ func (r *UserRepository) All() *[]models.UserModel {
 }
 
 func (r *UserRepository) Exists(email string, password string) bool {
-    result := &models.UserModel{}
     cnt := 0
     
     r.db.Where(&models.UserModel{
         Email: email,
         Password: password,
-    }).Find(result).Count(&cnt)
+    }).Find(models.User()).Count(&cnt)
 
     return cnt > 0
 }
