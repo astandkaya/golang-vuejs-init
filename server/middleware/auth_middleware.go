@@ -28,15 +28,15 @@ func Auth(identityKey string, userRepo models.UserRepository) *jwt.GinJWTMiddlew
                 }
                 return jwt.MapClaims{}
             },
-            IdentityHandler: func(c *gin.Context) interface{} {
-                claims := jwt.ExtractClaims(c)
+            IdentityHandler: func(ctx *gin.Context) interface{} {
+                claims := jwt.ExtractClaims(ctx)
                 return &models.UserModel{
                     Email: claims[identityKey].(string),
                 }
             },
-            Authenticator: func(c *gin.Context) (interface{}, error) {
+            Authenticator: func(ctx *gin.Context) (interface{}, error) {
                 var loginVals models.UserModel
-                if err := c.ShouldBind(&loginVals); err != nil {
+                if err := ctx.ShouldBind(&loginVals); err != nil {
                     return "", jwt.ErrMissingLoginValues
                 }
                 email := loginVals.Email
@@ -50,15 +50,15 @@ func Auth(identityKey string, userRepo models.UserRepository) *jwt.GinJWTMiddlew
 
                 return nil, jwt.ErrFailedAuthentication
             },
-            Authorizator: func(data interface{}, c *gin.Context) bool {
+            Authorizator: func(data interface{}, ctx *gin.Context) bool {
                 if _, ok := data.(*models.UserModel); ok {
                     return true
                 }
 
                 return false
             },
-            Unauthorized: func(c *gin.Context, code int, message string) {
-                c.JSON(code, gin.H{
+            Unauthorized: func(ctx *gin.Context, code int, message string) {
+                ctx.JSON(code, gin.H{
                     "code":    code,
                     "message": message,
                 })
