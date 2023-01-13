@@ -35,16 +35,15 @@ func Auth(identityKey string, userRepo models.UserRepository) *jwt.GinJWTMiddlew
                 }
             },
             Authenticator: func(ctx *gin.Context) (interface{}, error) {
-                var loginVals models.UserModel
-                if err := ctx.ShouldBind(&loginVals); err != nil {
+                var user models.UserModel
+                if err := ctx.ShouldBind(&user); err != nil {
                     return "", jwt.ErrMissingLoginValues
                 }
-                email := loginVals.Email
-                password := services.Hash().Make(loginVals.Password)
+                user.Password = services.Hash().Make(user.Password)
 
-                if ( userRepo.Exists(email, password) ) {
+                if ( userRepo.Exists(user) ) {
                     return &models.UserModel{
-                        Email:  email,
+                        Email:  user.Email,
                     }, nil
                 }
 

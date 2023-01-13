@@ -19,5 +19,5 @@ type UserRepository interface {
     Create(user *UserModel)
     Find(id int) *UserModel
     All() *[]UserModel
-    Exists(email string, password string) bool
+    Exists(user UserModel) bool
 }
