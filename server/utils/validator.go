@@ -5,6 +5,7 @@ import (
     "github.com/jinzhu/gorm"
 
     "app/models"
+    "app/repositories"
 )
 
 var validate *validator.Validate
@@ -22,12 +23,10 @@ func Validator() *validator.Validate {
 }
 
 func uniqUserEmail(fl validator.FieldLevel) bool {
-    cnt := 0
-    model := &models.UserModel{
+    r := repositories.User(db)
+    m := models.UserModel{
         Email: fl.Field().String(),
     }
-    
-    db.Where(model).Find(model).Count(&cnt)
 
-    return cnt == 0
+    return !r.Exists(m)
 }
