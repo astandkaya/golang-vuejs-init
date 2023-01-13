@@ -9,6 +9,7 @@ import (
     "app/controllers"
     "app/middleware"
     "app/models"
+    "app/utils"
 )
 
 func main() {
@@ -16,6 +17,8 @@ func main() {
     db := database.Connection()
 
     identityKey := "id"
+
+    utils.ValidatorInit(db)
 
     authMiddleware := middleware.Auth(identityKey, repositories.User(db))
     authMiddleware.MiddlewareInit()

@@ -6,8 +6,8 @@ import (
 
 type UserModel struct {
     gorm.Model
-    Email  string `form:"email" json:"email" binding:"required"`
-    Password  string `form:"password" json:"password" binding:"required"`
+    Email  string `form:"email" json:"email" validate:"required,email,uniq-user-email"`
+    Password  string `form:"password" json:"password" validate:"required"`
 }
 
 func User() *UserModel {

@@ -7,6 +7,7 @@ import (
 
     "app/models"
     "app/services"
+    "app/utils"
 )
 
 type RegisterController struct {
@@ -21,8 +22,18 @@ func Register(userRepo models.UserRepository) *RegisterController {
 
 func (r *RegisterController) Store(ctx *gin.Context) {
     user := models.User()
+
     if err := ctx.ShouldBind(user); err != nil {
-        ctx.JSON(http.StatusCreated, gin.H{
+        ctx.JSON(http.StatusBadRequest, gin.H{
+            "status": "ng",
+            "message": "bind error",
+        })
+        return
+    }
+
+    validate := utils.Validator()
+    if err := validate.Struct(user); err != nil {
+        ctx.JSON(http.StatusBadRequest, gin.H{
             "status": "ng",
             "message": "valid error",
         })
