@@ -19,7 +19,7 @@ func Test(testRepo models.TestRepository) *TestController {
 }
 
 func (c *TestController) Index(ctx *gin.Context) {
-    ctx.JSON(http.StatusCreated, gin.H{
+    ctx.JSON(http.StatusOK, gin.H{
         "status": "ok",
     })
 }
