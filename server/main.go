@@ -2,13 +2,11 @@ package main
 
 import (
     "github.com/gin-gonic/gin"
-    jwt "github.com/appleboy/gin-jwt/v2"
 
     "app/database"
     "app/repositories"
     "app/controllers"
     "app/middleware"
-    "app/models"
     "app/utils"
 )
 
@@ -16,11 +14,9 @@ func main() {
     g := gin.Default()
     db := database.Connection()
 
-    identityKey := "id"
-
     utils.ValidatorInit(db)
 
-    authMiddleware := middleware.Auth(identityKey, repositories.User(db))
+    authMiddleware := middleware.Auth(repositories.User(db))
     authMiddleware.MiddlewareInit()
 
     // -----
@@ -49,17 +45,12 @@ func main() {
         }
 
         // 認証が必要なAPI
-        v1.Use(authMiddleware.MiddlewareFunc())
+        member := v1.Group("/", authMiddleware.MiddlewareFunc())
         {
-            v1.GET("/test_auth", func(c *gin.Context) {
-                claims := jwt.ExtractClaims(c)
-                user, _ := c.Get(identityKey)
-                c.JSON(200, gin.H{
-                  "userID":   claims[identityKey],
-                  "email": user.(*models.UserModel).Email,
-                  "text":     "Hello World.",
-                })
-            })
+            testAuth := controllers.TestAuth(repositories.User(db))
+            {
+                member.GET("/test_auth", testAuth.Index)
+            }
         }
     }
 

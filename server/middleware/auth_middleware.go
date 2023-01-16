@@ -12,18 +12,20 @@ import (
     "app/services"
 )
 
-func Auth(identityKey string, userRepo models.UserRepository) *jwt.GinJWTMiddleware {
+var IdentityKey = "id"
+
+func Auth(userRepo models.UserRepository) *jwt.GinJWTMiddleware {
     m, err := jwt.New(
         &jwt.GinJWTMiddleware{
             Realm:       "test zone",
             Key:         []byte(os.Getenv("JWT_SECRET_KEY")),
             Timeout:     time.Hour,
             MaxRefresh:  time.Hour*24*31,
-            IdentityKey: identityKey,
+            IdentityKey: IdentityKey,
             PayloadFunc: func(data interface{}) jwt.MapClaims {
                 if v, ok := data.(*models.UserModel); ok {
                     return jwt.MapClaims{
-                        identityKey: v.Email,
+                        IdentityKey: v.Email,
                     }
                 }
                 return jwt.MapClaims{}
@@ -31,7 +33,7 @@ func Auth(identityKey string, userRepo models.UserRepository) *jwt.GinJWTMiddlew
             IdentityHandler: func(ctx *gin.Context) interface{} {
                 claims := jwt.ExtractClaims(ctx)
                 return &models.UserModel{
-                    Email: claims[identityKey].(string),
+                    Email: claims[IdentityKey].(string),
                 }
             },
             Authenticator: func(ctx *gin.Context) (interface{}, error) {
