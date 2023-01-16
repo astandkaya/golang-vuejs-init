@@ -10,17 +10,17 @@ import (
     "app/utils"
 )
 
-type RegisterController struct {
+type SignupController struct {
     userRepo models.UserRepository
 }
 
-func Register(userRepo models.UserRepository) *RegisterController {
-    return &RegisterController{
+func Signup(userRepo models.UserRepository) *SignupController {
+    return &SignupController{
         userRepo: userRepo,
     }
 }
 
-func (r *RegisterController) Store(ctx *gin.Context) {
+func (r *SignupController) Store(ctx *gin.Context) {
     user := models.User()
 
     if err := ctx.ShouldBind(user); err != nil {

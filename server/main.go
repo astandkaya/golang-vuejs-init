@@ -39,9 +39,9 @@ func main() {
         // 認証系API
         auth := v1.Group("/auth")
         {
-            register := controllers.Register(repositories.User(db))
+            signup := controllers.Signup(repositories.User(db))
             {
-                auth.POST("/register", register.Store)
+                auth.POST("/signup", signup.Store)
             }
 
             auth.POST("/login", authMiddleware.LoginHandler)
