@@ -18,7 +18,7 @@ func Auth(identityKey string, userRepo models.UserRepository) *jwt.GinJWTMiddlew
             Realm:       "test zone",
             Key:         []byte(os.Getenv("JWT_SECRET_KEY")),
             Timeout:     time.Hour,
-            MaxRefresh:  time.Hour,
+            MaxRefresh:  time.Hour*24*31,
             IdentityKey: identityKey,
             PayloadFunc: func(data interface{}) jwt.MapClaims {
                 if v, ok := data.(*models.UserModel); ok {
