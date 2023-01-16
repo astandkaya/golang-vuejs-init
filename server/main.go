@@ -25,6 +25,7 @@ func main() {
     v1 := g.Group("/v1")
     {
         v1.Use(middleware.RateLimit())
+        v1.Use(middleware.Cors())
 
         // 通常のAPI
         test := controllers.Test(repositories.Test(db))
