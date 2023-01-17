@@ -27,6 +27,12 @@ services:
       - ./server:/go/src/app
     depends_on:
       - 'go_vue_db'
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
 
   # db
   go_vue_db:

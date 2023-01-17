@@ -1,26 +1,64 @@
 package main
 
 import (
-	"net/http"
-	"github.com/gin-gonic/gin"
-	"app/controllers"
+    "github.com/gin-gonic/gin"
+
+    "app/database"
+    "app/repositories"
+    "app/controllers"
+    "app/middleware"
+    "app/utils"
 )
 
 func main() {
-    engine := gin.Default()
-    
-    engine.GET("/", func(c *gin.Context) {
-        c.JSON(http.StatusOK, gin.H{
-            "message": "hello world",
-        })
-    })
+    g := gin.Default()
+    db := database.Connection()
 
-    test := engine.Group("/test")
+    utils.ValidatorInit(db)
+
+    authMiddleware := middleware.Auth(repositories.User(db))
+    authMiddleware.MiddlewareInit()
+
+    // -----
+    // route
+    // -----
+    v1 := g.Group("/v1")
     {
-        v1 := test.Group("/v1")
+        v1.Use(middleware.RateLimit())
+        v1.Use(middleware.Cors())
+
+        // 通常のAPI
+        test := controllers.Test(repositories.Test(db))
         {
-            v1.GET("/test", controllers.Test)
+            v1.GET("/test", test.Index)
+        }
+
+        // 認証系API
+        auth := v1.Group("/auth")
+        {
+            signup := controllers.Signup(repositories.User(db))
+            {
+                auth.POST("/signup", signup.Store)
+            }
+
+            deactivate := controllers.Deactivate(repositories.User(db))
+            {
+                auth.POST("/deactivate", authMiddleware.MiddlewareFunc(), deactivate.Store)
+            }
+
+            auth.POST("/login", authMiddleware.LoginHandler)
+            auth.GET("/refresh_token", authMiddleware.RefreshHandler)
+        }
+
+        // 認証が必要なAPI
+        member := v1.Group("/", authMiddleware.MiddlewareFunc())
+        {
+            testAuth := controllers.TestAuth(repositories.User(db))
+            {
+                member.GET("/test_auth", testAuth.Index)
+            }
         }
     }
-    engine.Run(":8000")
+
+    g.Run(":8000")
 }
