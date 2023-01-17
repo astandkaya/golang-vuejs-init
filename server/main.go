@@ -41,6 +41,11 @@ func main() {
                 auth.POST("/signup", signup.Store)
             }
 
+            deactivate := controllers.Deactivate(repositories.User(db))
+            {
+                auth.POST("/deactivate", authMiddleware.MiddlewareFunc(), deactivate.Store)
+            }
+
             auth.POST("/login", authMiddleware.LoginHandler)
             auth.GET("/refresh_token", authMiddleware.RefreshHandler)
         }

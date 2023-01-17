@@ -41,3 +41,7 @@ func (r *UserRepository) Exists(user models.UserModel) bool {
 
     return cnt > 0
 }
+
+func (r *UserRepository) Delete(user models.UserModel) {
+    r.db.Where(user).Delete(user)
+}

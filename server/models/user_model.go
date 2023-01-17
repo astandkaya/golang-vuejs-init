@@ -20,4 +20,5 @@ type UserRepository interface {
     Find(id int) *UserModel
     All() *[]UserModel
     Exists(user UserModel) bool
+    Delete(user UserModel)
 }
